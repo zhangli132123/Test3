@@ -1,0 +1,71 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+
+public class Login_Database {
+
+    User ur;
+
+    void setUser(User ur) {
+        this.ur = ur;
+    }
+    /*
+     * JudgeAdmin()方法
+     * 判断Admin的ID和密码是否正确，如果正确，显示登录成功
+     * 如果错误，弹出一个窗口，显示账号或密码错误
+     */
+    private String driver = "com.mysql.jdbc.Driver";
+    private String url = "jdbc:mysql://localhost:3306/register?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+    private String user = "root";
+    private String sqlpassword = "132123";
+
+
+
+    public boolean login(User a) throws SQLException, ClassNotFoundException {
+        String sql=" select * from register where id = ? and password = ?";
+
+        Class.forName(driver);
+        Connection conn = DriverManager.getConnection(url, user, sqlpassword);
+        /*sql任务获取语句*/
+        PreparedStatement ps = conn.prepareStatement(sql);
+
+        ps.setString(1, a.getID());
+        ps.setString(2, a.getPassword());
+
+
+        /*遍历结果集*/
+        ResultSet rs = ps.executeQuery();
+
+        int ans = 0;
+        /*  .next()  判读是否有结果可以遍历*/
+        if(rs.next()) {
+            ans = 1;
+        }
+        rs.close();
+        ps.close();
+        conn.close();
+        if(ans == 1) {
+            return true;
+        }
+        else return false;
+    }
+
+        /*判断是否登录成功*/
+    int JudgeUser() {
+
+        try {
+            if(login(this.ur)) {
+                return 1;
+            }else {
+                return 0;
+            }
+        }catch(Exception e) {
+
+        }
+        return 0;
+
+    }
+}
