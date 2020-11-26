@@ -1,0 +1,123 @@
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.lang.reflect.Field;
+
+public class Operate extends JFrame {
+
+    /*通过反射机制将Login中的ID传导到此处*/
+    Operate() throws IOException {
+        init();
+    }
+    void init() throws IOException {
+
+        JFrame frame = new JFrame("上传或下载");
+        frame.setLayout(null);
+
+        JButton buttonup = new JButton("上传");
+        buttonup.setBounds(575, 200, 70, 25);
+        frame.add(buttonup);
+
+        JButton buttondown = new JButton("下载");
+        buttondown.setBounds(575, 270, 70, 25);
+        frame.add(buttondown);
+
+        JTextField up = new JTextField();
+        up.setBounds(100, 200, 375, 25);
+        frame.add(up);
+
+        JTextField down = new JTextField();
+        down.setBounds(100, 270, 375, 25);
+        frame.add(down);
+
+        frame.setBounds(400, 100, 800, 640);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
+
+//      上传
+        buttonup.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String ID = Login_interface.ID;
+
+                String txt1 = up.getText(); /*上传按钮旁的文本*/
+                File dir = new File("Z:\\Javaaaaaa\\Test3\\data\\upload");
+                String[] fileList = dir.list();
+
+                for(String file : fileList){
+                    /*如果upload文件名字与text1中搜索的名字一样，上传该文档到temp*/
+                    if(file.equals(txt1))
+                    {
+                        /*将up文件夹传输的到temp文件夹中*/
+                        File up = new File("Z:\\Javaaaaaa\\Test3\\data\\upload"+"\\"+txt1);
+                        File temp = new File("Z:\\Javaaaaaa\\Test3\\data\\temp\\"+ID+"\\"+txt1);
+
+                        try {
+                            InputStream input = new FileInputStream(up);
+                            OutputStream output = new FileOutputStream(temp);
+                            byte[] bytes = new byte[(int) up.length()];
+                            int bytesRead;
+                            while((bytesRead = input.read(bytes)) > 0 ){
+                                output.write(bytes,0,bytesRead);
+                            };
+
+                            JOptionPane.showMessageDialog(null, "上传成功", "上传成功", JOptionPane.NO_OPTION);
+
+                            input.close();
+                            output.close();
+                        } catch (IOException fileNotFoundException) {
+                            fileNotFoundException.printStackTrace();
+                        }
+                    }
+
+                }
+                up.setText("");
+            }
+        });
+
+//      下载
+        buttondown.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+
+                String ID = Login_interface.ID;
+
+                String txt2 = down.getText(); /*下载旁边的文本*/
+                File dir = new File("Z:\\Javaaaaaa\\Test3\\data\\temp\\"+ID);
+                String[] fileList = dir.list();
+
+                for(String file : fileList){
+                    /*如果temp文件名字与text2中搜索的名字一样，下载该文档到download*/
+                    if(file.equals(txt2))
+                    {
+                        /*将up文件夹传输的到temp文件夹中*/
+                        File temp = new File("Z:\\Javaaaaaa\\Test3\\data\\temp\\"+ID+"\\"+txt2);
+                        File down = new File("Z:\\Javaaaaaa\\Test3\\data\\download"+"\\"+txt2);
+
+                        try {
+                            InputStream input = new FileInputStream(temp);
+                            OutputStream output = new FileOutputStream(down);
+                            byte[] bytes = new byte[(int) temp.length()];
+                            int bytesRead;
+                            while((bytesRead = input.read(bytes)) > 0 ){
+                                output.write(bytes,0,bytesRead);
+                            };
+
+                            JOptionPane.showMessageDialog(null, "下载成功", "下载成功", JOptionPane.NO_OPTION);
+
+                            input.close();
+                            output.close();
+                        } catch (IOException fileNotFoundException) {
+                            fileNotFoundException.printStackTrace();
+                        }
+                    }
+
+                }
+                down.setText("");
+            }
+        });
+    }
+    
+}
