@@ -1,0 +1,112 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.sql.SQLException;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+
+/*
+ * 用户注册界面
+ */
+
+public class Register_interface extends JFrame{
+    Register_interface () {
+        init();
+    }
+    void init() {
+        JFrame frame = new JFrame("注册账号");
+        frame.setLayout(null);
+
+        /*编辑标签*/
+        JLabel IDStr = new JLabel("账号:");
+        IDStr.setBounds(250, 200, 100, 25);
+        frame.add(IDStr);
+
+        JLabel passwordStr = new JLabel("密码:");
+        passwordStr.setBounds(250, 250, 100, 25);
+        frame.add(passwordStr);
+
+        JLabel confrimStr = new JLabel("确认密码:");
+        confrimStr.setBounds(250, 300, 100, 30);
+        frame.add(confrimStr);
+
+        /*生成文本框*/
+        JTextField userID = new JTextField();
+        userID.setBounds(320, 200, 150, 25);
+        frame.add(userID);
+
+        JPasswordField password = new JPasswordField();
+        password.setBounds(320, 250, 150, 25);
+        frame.add(password);
+
+        JPasswordField confrimPassword = new JPasswordField();
+        confrimPassword.setBounds(320, 300, 150, 25);
+        frame.add(confrimPassword);
+
+        /*按钮*/
+        JButton buttonlogin = new JButton("登录");
+        buttonlogin.setBounds(300,350,70,25);
+        frame.add(buttonlogin);
+
+        JButton buttonregister = new JButton("注册");
+        buttonregister.setBounds(400, 350, 70, 25);
+        frame.add(buttonregister);
+
+
+        /*设置边框大小*/
+        frame.setBounds(400, 100, 800, 640);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+
+        //为登录按钮增加监听器
+        buttonlogin.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.setVisible(false);
+                Register_interface login_register = new Register_interface();
+            }
+        });
+        //为注册按钮增加监听器
+        buttonregister.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String ID = userID.getText();
+                String passwd = new String (password.getPassword());
+                String confrimpasswd = new String (confrimPassword.getPassword());
+
+                //创建Register_Database类
+                Register_Database register = new Register_Database();
+                register.setID(ID);
+                register.setPassword(passwd);
+                register.setconfirmpasswd(confrimpasswd);
+
+                //如果注册成功，返回登录界面
+                try {
+                    if(register.JudgeRegister()) {
+
+                        frame.setVisible(false);
+                        Login_interface Login_interface = new Login_interface();
+                    }
+                } catch (SQLException e1) {
+                    // TODO Auto-generated catch block
+                    //e1.printStackTrace();
+                } catch (ClassNotFoundException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+
+                /*每次注册生成一个用用户账号命名的文件夹，后面云盘所存放的文件都采用这个文件夹*/
+                File file = new File("Z:\\Javaaaaaa\\Test3\\data\\temp\\" + ID );
+                if(!file.exists()){
+                    /*生成文件夹*/
+                    file.mkdir();
+                }
+            }
+
+        });
+    }
+}
